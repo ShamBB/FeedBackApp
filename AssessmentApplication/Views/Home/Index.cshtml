@@ -1,0 +1,73 @@
+﻿@model IEnumerable<FeebackModel>
+
+@{
+    Layout = "_Layout";
+    var title = "Feedback List";
+    ViewData["Title"] = title;
+}
+
+<h2>@title</h2>
+
+<h3><a asp-action="Create" class="btn btn-sm btn-secondary">Create Feedback</a></h3>
+<table class="table table-bordered table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Type Feedback</th>
+            <th>Additional Comment</th>
+            <th>Services</th>
+            <th>Attachment</th> <!-- Added Attachment column -->
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model == null || !Model.Any())
+        {
+            <tr>
+                <td colspan="10" class="text-center">No Feedback Data</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var feedback in Model)
+            {
+                <tr>
+                    <td>@feedback.Id</td>
+                    <td>@feedback.Name</td>
+                    <td>@feedback.Email</td>
+                    <td>@feedback.Age</td>
+                    <td>@feedback.TypeFeedback</td>
+                    <td>@feedback.AdditionalComment</td>
+                    <td>
+                        @foreach (var service in feedback.FeedbackServices)
+                        {
+                            @service.ServiceModel.Name <br />
+                        }
+                    </td>
+                    <td>
+                        @if (feedback.DocumentAttachments != null)
+                        {
+                            <a href="@Url.Action("DownloadFile", "Home", new { id = feedback.Id })">
+                                @feedback.DocumentAttachments.FileName
+                            </a>
+                        }
+                        else
+                        {
+                            <span>No Attachment</span>
+                        }
+                    </td>
+                    <td><a asp-action="Update" asp-route-id="@feedback.Id">Update</a></td>
+                    <td>
+                        <form asp-action="Delete" method="post" asp-route-id="@feedback.Id">
+                            <button class="btn btn-danger">Delete</button> 
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

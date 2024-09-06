@@ -1,0 +1,79 @@
+@model FeedbackDto
+
+@{
+    Layout = "_Layout";
+    var title = "Update Feedback Survey Form";
+}
+
+<h2 class="d-flex justify-content-center">@title</h2>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group mb-3"> <!-- Added mb-3 for margin-bottom -->
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3"> <!-- Added mb-3 for margin-bottom -->
+        <label asp-for="Email"></label>
+        <input asp-for="Email" type="email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3"> <!-- Added mb-3 for margin-bottom -->
+        <label asp-for="Age"></label>
+        <input asp-for="Age" type="text" class="form-control" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3"> <!-- Added mb-3 for margin-bottom -->
+        <label asp-for="FileUpload"></label>
+        <input asp-for="FileUpload" type="file" class="form-control" />
+        <span asp-validation-for="FileUpload" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3"> <!-- Added mb-3 for margin-bottom -->
+        <label asp-for="TypeFeedback"></label>
+        <select asp-for="TypeFeedback" class="form-control">
+            <option value="">Select Feedback Type</option>
+            <option value="Suggestion">Suggestion</option>
+            <option value="Complaint">Complaint</option>
+            <option value="Inquiry">Inquiry</option>
+        </select>
+        <span asp-validation-for="TypeFeedback" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3"> <!-- Added mb-3 for margin-bottom -->
+        <label>Select Services</label><br />
+        @foreach (var service in ViewBag.Services)
+        {
+            <div>
+                <input type="checkbox" name="SelectedServices" value="@service.Id" @(Model.SelectedServices.Contains(service.Id) ? "checked" : "") /> @service.Name
+            </div>
+        }
+    </div>
+    <div class="form-group mb-3"> <!-- Added mb-3 for margin-bottom -->
+        <label asp-for="AdditionalComment"></label>
+        <textarea asp-for="AdditionalComment" class="form-control"></textarea>
+        <span asp-validation-for="AdditionalComment" class="text-danger"></span>
+    </div>
+    @if (ViewBag.ExistingFileName != null)
+    {
+        <div>
+            <strong>Existing File:</strong> 
+            <a href="@Url.Action("DownloadFile", "Home", new { id = Model.Id })" target="_blank">
+                @ViewBag.ExistingFileName
+            </a>
+        </div>
+    }
+    <button type="submit" class="btn btn-success d-flex w-100 justify-content-center">Update Feedback</button>
+</form>
+
+@section scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var selectedType = '@Model.TypeFeedback';
+            $('#typeFeedbackSelect').val(selectedType);
+        });
+    </script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
